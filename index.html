@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style type="text/css" media="screen">
+      body {
+        margin: 0;
+        background: #888;
+      }
+      svg {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <svg id="grid"></svg>
+    <script type="text/javascript">
+      "use strict";
+
+      const field_width = 49;
+      const field_height = 49;
+      const cell_size = 12;
+      const gap = 1;
+      const step = cell_size + gap;
+
+      function* range(limit) { for (let i = 0; i < limit; i++) yield i }
+      const xs = () => range(field_width);
+      const ys = () => range(field_height);
+
+      const fib = {};
+      {
+        const mi = field_width + field_height;
+        let [a, b] = [1, 2];
+        while (a < mi) {
+          fib[a] = true;
+          [a, b] = [b, a + b];
+        }
+      }
+
+      const cells = {};
+      const toggle = (x, y) => {
+        const rect = cells[y][x];
+        const enabled = rect.dataset.enabled === "1";
+        rect.dataset.enabled = enabled ? "0" : "1";
+        rect.setAttribute("fill", enabled ? "#000" : "#fff");
+      };
+
+      let onChange = (event) => {
+        const cx = +event.currentTarget.dataset.x;
+        const cy = +event.currentTarget.dataset.y;
+        for (let y of ys()) {
+          for (let x of xs()) {
+            const d = Math.abs(cx - x) + Math.abs(cy - y); // Manhattan
+            if (fib[d]) toggle(x, y);
+            // if ((d & (d - 1)) === 0) toggle(x, y); // powers of two
+            // if (d & (d >> 1)) toggle(x, y); // complex but too chaotic
+          }
+        }
+      };
+
+      const svgW = field_width * step - gap;
+      const svgH = field_height * step - gap;
+      const svg = document.getElementById("grid");
+      svg.setAttribute("width", svgW);
+      svg.setAttribute("height", svgH);
+      svg.setAttribute("viewBox", `0 0 ${svgW} ${svgH}`);
+
+      for (let y of ys()) {
+        const row_cells = {};
+        cells[y] = row_cells;
+        for (let x of xs()) {
+          const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+          rect.setAttribute("x", x * step);
+          rect.setAttribute("y", y * step);
+          rect.setAttribute("width", cell_size);
+          rect.setAttribute("height", cell_size);
+          rect.setAttribute("fill", "#000");
+          rect.dataset.x = x;
+          rect.dataset.y = y;
+          rect.dataset.enabled = "0";
+          rect.style.cursor = "pointer";
+          rect.addEventListener("click", onChange);
+          svg.appendChild(rect);
+          row_cells[x] = rect;
+        }
+      }
+    </script>
+  </body>
+</html>
