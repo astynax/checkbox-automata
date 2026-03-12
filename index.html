@@ -36,12 +36,17 @@
         }
       }
 
+      const stateColors = Array.from({length: 10}, (_, i) => {
+        const v = Math.round(i * 255 / 9).toString(16).padStart(2, "0");
+        return `#${v}${v}${v}`;
+      });
+
       const cells = {};
       const toggle = (x, y) => {
         const rect = cells[y][x];
-        const enabled = rect.dataset.enabled === "1";
-        rect.dataset.enabled = enabled ? "0" : "1";
-        rect.setAttribute("fill", enabled ? "#000" : "#fff");
+        const state = (+rect.dataset.state + 1) % 10;
+        rect.dataset.state = state;
+        rect.setAttribute("fill", stateColors[state]);
       };
 
       let onChange = (event) => {
@@ -76,7 +81,7 @@
           rect.setAttribute("fill", "#000");
           rect.dataset.x = x;
           rect.dataset.y = y;
-          rect.dataset.enabled = "0";
+          rect.dataset.state = "0";
           rect.style.cursor = "pointer";
           rect.addEventListener("click", onChange);
           svg.appendChild(rect);
