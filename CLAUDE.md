@@ -18,8 +18,6 @@ python3 -m http.server 8000
 ## Project Structure
 
 - `index.html` — entire application (HTML, CSS, JS in one file)
-- `main.js` — empty, reserved for extracted JS logic
-- `test_main.js` — empty, reserved for tests
 
 ## Tech Stack
 
