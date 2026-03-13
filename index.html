@@ -36,58 +36,62 @@
         }
       }
 
-      const stateColors = Array.from({length: 10}, (_, i) => {
+      const palette = Array.from({length: 10}, (_, i) => {
         const v = Math.round(i * 255 / 9).toString(16).padStart(2, "0");
         return `#${v}${v}${v}`;
       });
 
       const cells = {};
-      const toggle = (x, y) => {
+      const update = (x, y) => {
         const rect = cells[y][x];
         const state = (+rect.dataset.state + 1) % 10;
         rect.dataset.state = state;
-        rect.setAttribute("fill", stateColors[state]);
+        rect.setAttribute("fill", palette[state]);
       };
 
-      let onChange = (event) => {
+      const onClick = (event) => {
         const cx = +event.currentTarget.dataset.x;
         const cy = +event.currentTarget.dataset.y;
         for (let y of ys()) {
           for (let x of xs()) {
             const d = Math.abs(cx - x) + Math.abs(cy - y); // Manhattan
-            if (fib[d]) toggle(x, y);
-            // if ((d & (d - 1)) === 0) toggle(x, y); // powers of two
-            // if (d & (d >> 1)) toggle(x, y); // complex but too chaotic
+            if (fib[d]) update(x, y);
+            // if ((d & (d - 1)) === 0) update(x, y); // powers of two
+            // if (d & (d >> 1)) update(x, y); // complex but too chaotic
           }
         }
       };
 
-      const svgW = field_width * step - gap;
-      const svgH = field_height * step - gap;
-      const svg = document.getElementById("grid");
-      svg.setAttribute("width", svgW);
-      svg.setAttribute("height", svgH);
-      svg.setAttribute("viewBox", `0 0 ${svgW} ${svgH}`);
+      function prepareGrid() {
+        const svgW = field_width * step - gap;
+        const svgH = field_height * step - gap;
+        const svg = document.getElementById("grid");
+        svg.setAttribute("width", svgW);
+        svg.setAttribute("height", svgH);
+        svg.setAttribute("viewBox", `0 0 ${svgW} ${svgH}`);
 
-      for (let y of ys()) {
-        const row_cells = {};
-        cells[y] = row_cells;
-        for (let x of xs()) {
-          const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-          rect.setAttribute("x", x * step);
-          rect.setAttribute("y", y * step);
-          rect.setAttribute("width", cell_size);
-          rect.setAttribute("height", cell_size);
-          rect.setAttribute("fill", "#000");
-          rect.dataset.x = x;
-          rect.dataset.y = y;
-          rect.dataset.state = "0";
-          rect.style.cursor = "pointer";
-          rect.addEventListener("click", onChange);
-          svg.appendChild(rect);
-          row_cells[x] = rect;
+        for (let y of ys()) {
+          const row_cells = {};
+          cells[y] = row_cells;
+          for (let x of xs()) {
+            const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            rect.setAttribute("x", x * step);
+            rect.setAttribute("y", y * step);
+            rect.setAttribute("width", cell_size);
+            rect.setAttribute("height", cell_size);
+            rect.setAttribute("fill", "#000");
+            rect.dataset.x = x;
+            rect.dataset.y = y;
+            rect.dataset.state = "0";
+            rect.style.cursor = "pointer";
+            rect.addEventListener("click", onClick);
+            svg.appendChild(rect);
+            row_cells[x] = rect;
+          }
         }
       }
+
+      prepareGrid();
     </script>
   </body>
 </html>
