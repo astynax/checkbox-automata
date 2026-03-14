@@ -24,6 +24,7 @@
       <label><input type="checkbox" id="grid-toggle"> Grid</label>
       <label><input type="checkbox" id="hs-toggle" title="Horisontal Symmetry"> HS</label>
       <label><input type="checkbox" id="vs-toggle" title="Vertical Symmetry"> VS</label>
+      <button id="cycle-btn">Cycle</button>
     </div>
     <script type="text/javascript">
       "use strict";
@@ -124,6 +125,14 @@
 
       document.getElementById("grid-toggle").addEventListener("change", (e) => {
         document.getElementById("grid").classList.toggle("bordered", e.target.checked);
+      });
+
+      document.getElementById("cycle-btn").addEventListener("click", () => {
+        for (let y of ys()) {
+          for (let x of xs()) {
+            update(x, y);
+          }
+        }
       });
     </script>
   </body>
