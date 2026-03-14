@@ -9,18 +9,27 @@
       svg {
         display: block;
       }
+      svg.bordered rect {
+        stroke: #888;
+        stroke-width: 1;
+      }
+      #grid-controls {
+        padding: 4px;
+      }
     </style>
   </head>
   <body>
     <svg id="grid"></svg>
+    <div id="grid-controls">
+      <label><input type="checkbox" id="grid-toggle"> Grid</label>
+    </div>
     <script type="text/javascript">
       "use strict";
 
       const field_width = 49;
       const field_height = 49;
       const cell_size = 12;
-      const gap = 1;
-      const step = cell_size + gap;
+      const step = cell_size;
 
       function* range(limit) { for (let i = 0; i < limit; i++) yield i }
       const xs = () => range(field_width);
@@ -63,8 +72,8 @@
       };
 
       function prepareGrid() {
-        const svgW = field_width * step - gap;
-        const svgH = field_height * step - gap;
+        const svgW = field_width * step;
+        const svgH = field_height * step;
         const svg = document.getElementById("grid");
         svg.setAttribute("width", svgW);
         svg.setAttribute("height", svgH);
@@ -92,6 +101,10 @@
       }
 
       prepareGrid();
+
+      document.getElementById("grid-toggle").addEventListener("change", (e) => {
+        document.getElementById("grid").classList.toggle("bordered", e.target.checked);
+      });
     </script>
   </body>
 </html>
