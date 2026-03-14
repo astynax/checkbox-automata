@@ -22,6 +22,8 @@
     <svg id="grid"></svg>
     <div id="grid-controls">
       <label><input type="checkbox" id="grid-toggle"> Grid</label>
+      <label><input type="checkbox" id="hs-toggle" title="Horisontal Symmetry"> HS</label>
+      <label><input type="checkbox" id="vs-toggle" title="Vertical Symmetry"> VS</label>
     </div>
     <script type="text/javascript">
       "use strict";
@@ -58,9 +60,10 @@
         rect.setAttribute("fill", palette[state]);
       };
 
-      const onClick = (event) => {
-        const cx = +event.currentTarget.dataset.x;
-        const cy = +event.currentTarget.dataset.y;
+      const middleX = 24;
+      const middleY = 24;
+
+      const applyClick = (cx, cy) => {
         for (let y of ys()) {
           for (let x of xs()) {
             const d = Math.abs(cx - x) + Math.abs(cy - y); // Manhattan
@@ -69,6 +72,23 @@
             // if (d & (d >> 1)) update(x, y); // complex but too chaotic
           }
         }
+      };
+
+      const hsToggle = document.getElementById("hs-toggle");
+      const vsToggle = document.getElementById("vs-toggle");
+
+      const onClick = (event) => {
+        const cx = +event.currentTarget.dataset.x;
+        const cy = +event.currentTarget.dataset.y;
+        const hs = hsToggle.checked && cx !== middleX;
+        const vs = vsToggle.checked && cy !== middleY;
+
+        const points = [[cx, cy]];
+        if (hs) points.push([2 * middleX - cx, cy]);
+        if (vs) points.push([cx, 2 * middleY - cy]);
+        if (hs && vs) points.push([2 * middleX - cx, 2 * middleY - cy]);
+
+        for (const [px, py] of points) applyClick(px, py);
       };
 
       function prepareGrid() {
