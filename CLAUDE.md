@@ -29,6 +29,12 @@ python3 -m http.server 8000
 2. On cell click, compute Manhattan distance `|dx| + |dy|` from the clicked cell to every other cell.
 3. Increment (mod 10) cells whose distance is a Fibonacci number; update their fill color from a 10-step grayscale palette.
 
-Alternative toggle conditions are commented out in `index.html`:
-- Powers of two: `(d & (d - 1)) === 0`
-- Binary overlap: `d & (d >> 1)`
+## Controls
+
+- **Grid** checkbox — toggles a visible border around each cell.
+- **HS** (Horizontal Symmetry) checkbox — mirrors every click across the vertical center line (x=24).
+- **VS** (Vertical Symmetry) checkbox — mirrors every click across the horizontal center line (y=24).
+- HS and VS can be combined for 4-way symmetry.
+- **Cycle** button — increments every cell's state by one (global step, no distance filtering).
+
+Checkbox states are persisted across page refreshes.
