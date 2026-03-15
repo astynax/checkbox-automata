@@ -29,6 +29,12 @@
     <script type="text/javascript">
       "use strict";
 
+      const grid = document.getElementById("grid");
+      const gridToggle = document.getElementById("grid-toggle");
+      const hsToggle = document.getElementById("hs-toggle");
+      const vsToggle = document.getElementById("vs-toggle");
+      const cycleBtn = document.getElementById("cycle-btn");
+
       const field_width = 49;
       const field_height = 49;
       const cell_size = 12;
@@ -69,14 +75,9 @@
           for (let x of xs()) {
             const d = Math.abs(cx - x) + Math.abs(cy - y); // Manhattan
             if (fib[d]) update(x, y);
-            // if ((d & (d - 1)) === 0) update(x, y); // powers of two
-            // if (d & (d >> 1)) update(x, y); // complex but too chaotic
           }
         }
       };
-
-      const hsToggle = document.getElementById("hs-toggle");
-      const vsToggle = document.getElementById("vs-toggle");
 
       const onClick = (event) => {
         const cx = +event.currentTarget.dataset.x;
@@ -92,10 +93,9 @@
         for (const [px, py] of points) applyClick(px, py);
       };
 
-      function prepareGrid() {
+      function prepareGrid(svg) {
         const svgW = field_width * step;
         const svgH = field_height * step;
-        const svg = document.getElementById("grid");
         svg.setAttribute("width", svgW);
         svg.setAttribute("height", svgH);
         svg.setAttribute("viewBox", `0 0 ${svgW} ${svgH}`);
@@ -121,13 +121,15 @@
         }
       }
 
-      prepareGrid();
+      prepareGrid(grid);
 
-      document.getElementById("grid-toggle").addEventListener("change", (e) => {
-        document.getElementById("grid").classList.toggle("bordered", e.target.checked);
-      });
+      const toggleGrid = () => grid.classList.toggle("bordered", gridToggle.checked);
+      gridToggle.addEventListener("change", toggleGrid);
 
-      document.getElementById("cycle-btn").addEventListener("click", () => {
+      // browser remembers the checkbox's state so we need to sync the grid visibility
+      toggleGrid();
+
+      cycleBtn.addEventListener("click", () => {
         for (let y of ys()) {
           for (let x of xs()) {
             update(x, y);
