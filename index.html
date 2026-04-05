@@ -25,6 +25,7 @@
       <label><input type="checkbox" id="hs-toggle" title="Horisontal Symmetry"> HS</label>
       <label><input type="checkbox" id="vs-toggle" title="Vertical Symmetry"> VS</label>
       <button id="cycle-btn">Cycle</button>
+      <button id="png-btn">PNG</button>
     </div>
     <script type="text/javascript">
       "use strict";
@@ -34,6 +35,7 @@
       const hsToggle = document.getElementById("hs-toggle");
       const vsToggle = document.getElementById("vs-toggle");
       const cycleBtn = document.getElementById("cycle-btn");
+      const pngBtn = document.getElementById("png-btn");
 
       const field_width = 49;
       const field_height = 49;
@@ -135,6 +137,35 @@
             update(x, y);
           }
         }
+      });
+
+      pngBtn.addEventListener("click", () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = field_width;
+        canvas.height = field_height;
+        const ctx = canvas.getContext("2d");
+
+        for (let y of ys()) {
+          for (let x of xs()) {
+            const rect = cells[y][x];
+            const state = +rect.dataset.state;
+            ctx.fillStyle = palette[state];
+            ctx.fillRect(x, y, 1, 1);
+          }
+        }
+
+        const now = new Date();
+        const timestamp = now.getFullYear().toString() +
+          (now.getMonth() + 1).toString().padStart(2, "0") +
+          now.getDate().toString().padStart(2, "0") + "_" +
+          now.getHours().toString().padStart(2, "0") +
+          now.getMinutes().toString().padStart(2, "0") +
+          now.getSeconds().toString().padStart(2, "0");
+
+        const link = document.createElement("a");
+        link.download = `${timestamp}.png`;
+        link.href = canvas.toDataURL("image/png");
+        link.click();
       });
     </script>
   </body>
