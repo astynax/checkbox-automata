@@ -26,6 +26,11 @@
       <label><input type="checkbox" id="vs-toggle" title="Vertical Symmetry"> VS</label>
       <button id="cycle-btn">Cycle</button>
       <button id="png-btn">PNG</button>
+      <select id="palette-select">
+        <option value="grayscale">Grayscale</option>
+        <option value="lime">Lime</option>
+        <option value="pink">Pink</option>
+      </select>
     </div>
     <script type="text/javascript">
       "use strict";
@@ -36,6 +41,7 @@
       const vsToggle = document.getElementById("vs-toggle");
       const cycleBtn = document.getElementById("cycle-btn");
       const pngBtn = document.getElementById("png-btn");
+      const paletteSelect = document.getElementById("palette-select");
 
       const field_width = 49;
       const field_height = 49;
@@ -56,17 +62,29 @@
         }
       }
 
-      const palette = Array.from({length: 10}, (_, i) => {
-        const v = Math.round(i * 255 / 9).toString(16).padStart(2, "0");
-        return `#${v}${v}${v}`;
-      });
+      const palettes = {
+        grayscale: Array.from({length: 10}, (_, i) => {
+          const v = Math.round(i * 255 / 9).toString(16).padStart(2, "0");
+          return `#${v}${v}${v}`;
+        }),
+        lime: Array.from({length: 10}, (_, i) => {
+          const v = Math.round(i * 255 / 9).toString(16).padStart(2, "0");
+          return `#00${v}00`;
+        }),
+        pink: Array.from({length: 10}, (_, i) => {
+          const v = Math.round(i * 255 / 9).toString(16).padStart(2, "0");
+          return `#${v}00${v}`;
+        }),
+      };
+
+      let currentPalette = palettes["grayscale"];
 
       const cells = {};
       const update = (x, y) => {
         const rect = cells[y][x];
         const state = (+rect.dataset.state + 1) % 10;
         rect.dataset.state = state;
-        rect.setAttribute("fill", palette[state]);
+        rect.setAttribute("fill", currentPalette[state]);
       };
 
       const middleX = 24;
@@ -131,6 +149,16 @@
       // browser remembers the checkbox's state so we need to sync the grid visibility
       toggleGrid();
 
+      paletteSelect.addEventListener("change", () => {
+        currentPalette = palettes[paletteSelect.value];
+        for (let y of ys()) {
+          for (let x of xs()) {
+            const rect = cells[y][x];
+            rect.setAttribute("fill", currentPalette[+rect.dataset.state]);
+          }
+        }
+      });
+
       cycleBtn.addEventListener("click", () => {
         for (let y of ys()) {
           for (let x of xs()) {
@@ -149,7 +177,7 @@
           for (let x of xs()) {
             const rect = cells[y][x];
             const state = +rect.dataset.state;
-            ctx.fillStyle = palette[state];
+            ctx.fillStyle = currentPalette[state];
             ctx.fillRect(x, y, 1, 1);
           }
         }

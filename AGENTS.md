@@ -36,5 +36,5 @@ python3 -m http.server 8000
 - **VS** (Vertical Symmetry) checkbox — mirrors every click across the horizontal center line (y=24).
 - HS and VS can be combined for 4-way symmetry.
 - **Cycle** button — increments every cell's state by one (global step, no distance filtering).
-
-Checkbox states are persisted across page refreshes.
+- **PNG** button — downloads the current grid as a 49x49 PNG image.
+- **Palette** dropdown — switches between grayscale, lime, and pink color palettes.
